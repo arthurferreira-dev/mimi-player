@@ -1,14 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  IconPlayPause,
-  LoopIcon,
-  MimiPlayerIcon,
-  MutedIcon,
-} from "./components/Icon";
+import { ControlPlayPause, Controls, MimiPlayerIcon } from "./components/Icon";
 import { formatTime } from "./utils/format";
 import { useLooping } from "./hooks/useLooping";
 import { useMuted } from "./hooks/useMuted";
 import { MusicBtn } from "./components/Button";
+import { Alert } from "./components/Alert";
 
 const App = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -17,12 +13,29 @@ const App = () => {
   const [time, setTime] = useState<number | null>(null);
   const [inputFl, showInputFl] = useState<boolean>(false);
   const [paused, setPaused] = useState<boolean>(true);
+  const [errorAlert, setErrorAlert] = useState<string>("");
+  const [showAlert, setShowAlert] = useState<boolean>(false);
   const { loop, setLoop } = useLooping();
   const { muted, setMuted } = useMuted();
+  
+  const audioFiles = ["mp3", "wav", "ogg", "aac", "m4a"];
 
   const getAudioFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !audioRef.current) return;
+
+    const audioExtension = file.name.split(".").pop()?.toLowerCase();
+
+    if (!audioExtension || !audioFiles.includes(audioExtension)) {
+      setErrorAlert(
+        `Apenas arquivos ${audioFiles
+          .map((e) => `.${e}`)
+          .join(" ")} são suportados!`
+      );
+      setShowAlert(true);
+      e.target.value = "";
+      return;
+    }
 
     const rawName = file.name;
     const nonName = rawName.replace(/\.[^/.]+$/, "");
@@ -98,8 +111,19 @@ const App = () => {
     verifyTimer();
   }, [paused, loop, muted]);
 
+  const handleInputOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = Number(e.target.value);
+    setTime(time);
+
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+    }
+  };
+
   return (
     <main className="main-content font-poppins">
+      <Alert error={errorAlert} set={setShowAlert} show={showAlert} />
+
       <MimiPlayerIcon />
 
       <h1 className="text-2xl font-semibold">Mimi Player</h1>
@@ -125,27 +149,16 @@ const App = () => {
             max={Number(duration)}
             step={0.01}
             value={time?.toString()}
-            onChange={(e) => {
-              const time = Number(e.target.value);
-              setTime(time);
-
-              if (audioRef.current) {
-                audioRef.current.currentTime = time;
-              }
-            }}
+            onChange={handleInputOnChange}
           />
-          <p className="font-medium">{duration !== null ? formatTime(duration) : "00:00"}</p>
+          <p className="font-medium">
+            {duration !== null ? formatTime(duration) : "00:00"}
+          </p>
         </div>
         <div className="flex justify-center items-center gap-3.5">
-          <div className="controls-icon" onClick={() => setPaused(!paused)}>
-            <IconPlayPause paused={paused} />
-          </div>
-          <div className="controls-icon" onClick={setLoop}>
-            <LoopIcon />
-          </div>
-          <div className="controls-icon" onClick={setMuted}>
-            <MutedIcon />
-          </div>
+          <Controls type="muted" set={setMuted} />
+          <ControlPlayPause p={paused} set={setPaused} />
+          <Controls type="loop" set={setLoop} />
         </div>
       </div>
 
@@ -158,6 +171,7 @@ const App = () => {
             : "hidden"
         }
         type="file"
+        accept={audioFiles.map((ext) => `.${ext}`).join(",")}
         onChange={getAudioFile}
       />
     </main>

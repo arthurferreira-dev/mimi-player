@@ -37,3 +37,36 @@ export const MutedIcon = () => {
 
   return muted ? <VolumeX /> : <Volume2 />;
 };
+
+type ControlsType = {
+  p: boolean;
+  set: React.Dispatch<React.SetStateAction<boolean>>;
+};
+export const ControlPlayPause = ({ p, set }: ControlsType) => {
+  return (
+    <div className="controls-icon" onClick={() => set(!p)}>
+      <IconPlayPause paused={p} />
+    </div>
+  );
+};
+
+type ControlsTypeZustand = {
+  type: string;
+  set: () => void;
+};
+export const Controls = ({ type, set }: ControlsTypeZustand) => {
+  switch (type) {
+    case "loop":
+      return (
+        <div className="controls-icon" onClick={set}>
+          <LoopIcon />
+        </div>
+      );
+    case "muted":
+      return (
+        <div className="controls-icon" onClick={set}>
+          <MutedIcon />
+        </div>
+      );
+  }
+};
