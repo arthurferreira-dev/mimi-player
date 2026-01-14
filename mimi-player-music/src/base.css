@@ -1,9 +1,7 @@
 @import "tailwindcss";
 @plugin "daisyui" {
   themes: light --default;
-}
-
-@layer components {
+}@layer components {
   .main-content {
     @apply w-full h-full flex flex-col justify-center items-center gap-3.5 bg-amber-50;
   }
@@ -17,7 +15,7 @@
   }
 
   .range-audio {
-    @apply w-full appearance-none accent-amber-300  bg-transparent;
+    @apply w-full accent-amber-300 bg-transparent;
   }
 
   .range-audio::-webkit-slider-runnable-track {
@@ -29,12 +27,22 @@
   }
 
   .range-audio::-webkit-slider-thumb {
-    -webkit-appearance: none;
     @apply w-3 h-3 rounded-full bg-amber-400 cursor-pointer;
-    margin-top: -3px;
   }
 
   .range-audio::-moz-range-thumb {
     @apply w-3 h-3 rounded-full bg-amber-400 border-none cursor-pointer;
+  }
+
+  .flex-row-center {
+    @apply flex justify-center items-center;
+  }
+
+  .input-range-vol {
+    @apply my-4 transition-all duration-300 ease-out overflow-hidden;
+  }
+
+  .input-file {
+    @apply duration-300 p-1 focus:outline-none;
   }
 }

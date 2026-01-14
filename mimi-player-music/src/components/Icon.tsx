@@ -5,10 +5,12 @@ import {
   Play,
   Repeat,
   Repeat1,
+  Volume1,
   Volume2,
   VolumeX,
 } from "lucide-react";
 import { useMuted } from "../hooks/useMuted";
+import { useVolume } from "../hooks/useVolume";
 
 export const MimiPlayerIcon = () => {
   return (
@@ -34,8 +36,13 @@ export const LoopIcon = () => {
 
 export const MutedIcon = () => {
   const { muted } = useMuted();
+  const { vol } = useVolume();
 
-  return muted ? <VolumeX /> : <Volume2 />;
+  if (muted || vol === 0) {
+    return <VolumeX />;
+  } else if (vol === 0.5) {
+    return <Volume1 />;
+  } else return <Volume2 />;
 };
 
 type ControlsType = {

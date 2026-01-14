@@ -18,7 +18,7 @@ export const Alert = ({ show, error, set }: Alert) => {
       >
         <CircleX />
       </div>
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full flex-row-center">
         <span className="text-[15px]">{error}</span>
       </div>
     </div>

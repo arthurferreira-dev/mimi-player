@@ -11,3 +11,5 @@ export const formatTime = (totalSeconds: number): string => {
 
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 };
+
+export const formatPorcent = (porcent: number): string => `${Math.round(porcent * 100)}%`;
